@@ -1,0 +1,1311 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لعبة الأسئلة الدينية والهدى الثقافي</title>
+  
+  <!-- استدعاء خطوط عربية جميلة وبسيطة كبديل تفاعلي -->
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+  
+  <!-- مكتبة Tailwind CSS للتصميم المتجاوب والسريع -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Cairo', 'Tajawal', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: 'Cairo', 'Tajawal', sans-serif;
+      background-color: #042f2e; /* خلفية زمردية داكنة */
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(13, 148, 136, 0.15) 0px, transparent 50%),
+        radial-gradient(at 50% 0%, rgba(202, 138, 4, 0.08) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(13, 148, 136, 0.15) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(15, 23, 42, 0.9) 0px, transparent 70%);
+      color: #f8fafc;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* زخرفة إسلامية خفيفة للخلفية */
+    .islamic-pattern {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      opacity: 0.1;
+      pointer-events: none;
+      background-size: 40px 40px;
+      background-image: 
+        linear-gradient(to right, rgba(234, 179, 8, 0.15) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(234, 179, 8, 0.15) 1px, transparent 1px);
+      z-index: 1;
+    }
+
+    /* زجاجية القوائم والبطاقات */
+    .glass-panel {
+      background: rgba(15, 32, 39, 0.8);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(234, 179, 8, 0.2);
+    }
+
+    .glass-panel-light {
+      background: rgba(20, 50, 60, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .text-gold-gradient {
+      background: linear-gradient(135deg, #fef08a 0%, #eab308 50%, #ca8a04 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* مؤشر تقدم المؤقت الدائري */
+    .timer-circle {
+      transition: stroke-dashoffset 1s linear;
+    }
+
+    /* تخصيص مظهر شريط التمرير */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.02);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(234, 179, 8, 0.3);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(234, 179, 8, 0.5);
+    }
+  </style>
+</head>
+<body class="relative flex flex-col justify-between min-h-screen p-4 sm:p-6 md:p-8 select-none overflow-x-hidden">
+
+  <!-- شبكة الزخرفة الخلفية -->
+  <div class="islamic-pattern"></div>
+
+  <!-- حاوية اللعبة الرئيسية -->
+  <div class="w-full max-w-4xl mx-auto z-10 flex flex-col justify-between flex-grow">
+    
+    <!-- شريط اللعبة العلوي -->
+    <header class="flex items-center justify-between py-3 px-4 mb-6 glass-panel-light rounded-2xl">
+      <div class="flex items-center gap-3">
+        <div class="p-2.5 bg-yellow-500/10 border border-yellow-500/30 rounded-xl text-yellow-500 shadow-md">
+          <!-- أيقونة مصحف/كتاب مفتوح مبسطة بالـ SVG -->
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-lg md:text-xl font-bold text-white flex items-center gap-2">
+            مسابقة <span class="text-yellow-400 font-black">الأسئلة الدينية</span>
+          </h1>
+          <p class="text-[11px] text-emerald-300">منصة الهدى الثقافية للهواتف</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <!-- زر كتم تفعيل الصوت -->
+        <button id="btn-audio-toggle" onclick="toggleAudio()" class="p-2.5 rounded-xl border border-white/10 hover:border-yellow-500/30 transition-all cursor-pointer hover:bg-white/5 text-gray-200">
+          <svg id="svg-audio-on" class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+          </svg>
+          <svg id="svg-audio-off" class="w-5 h-5 text-red-400 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />
+          </svg>
+        </button>
+
+        <!-- النقاط العظمى المخزنة محلياً -->
+        <div class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-yellow-500/10 border border-yellow-500/20 text-yellow-300 text-xs font-semibold">
+          <span>أعلى رصيد:</span>
+          <span id="label-high-score" class="font-mono text-white text-sm">0</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- مساحة المحتوى المتغيرة ديناميكياً -->
+    <main class="flex-grow flex items-center justify-center py-2" id="game-stage">
+      
+      <!-- الواجهة 1: الاستعداد والترحيب الافتراضي -->
+      <div id="screen-welcome" class="w-full max-w-2xl px-6 py-8 md:py-10 glass-panel rounded-3xl relative overflow-hidden shadow-2xl transition-all">
+        <div class="text-center space-y-6">
+          <div class="relative inline-block mx-auto">
+            <div class="absolute -inset-1 rounded-full bg-yellow-500/20 blur-xl opacity-75 animate-pulse"></div>
+            <div class="relative text-yellow-400 bg-emerald-950 p-5 rounded-full border-2 border-yellow-500/40 shadow-inner flex items-center justify-center w-20 h-20 mx-auto">
+              <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+              </svg>
+            </div>
+          </div>
+
+          <div class="space-y-2">
+            <h2 class="text-2xl md:text-3xl font-extrabold text-white">اختبر معلوماتك الدينية والفقهية</h2>
+            <p class="text-xs md:text-sm text-emerald-200/80 max-w-lg mx-auto leading-relaxed">
+              مسابقة مباركة تضم أسئلة منوعة في القرآن الكريم، السيرة النبوية والمطهرة، قصص الأنبياء، وسير الصحابة والتابعين الأجلاء لتعزيز الفقه الإسلامي.
+            </p>
+          </div>
+
+          <!-- تصنيفات الفروع -->
+          <div class="space-y-2 pt-2 text-right">
+            <span class="text-xs font-bold text-yellow-400">اختر تصنيف الأسئلة المفضل:</span>
+            <div id="categories-grid" class="grid grid-cols-2 md:grid-cols-3 gap-2">
+              <!-- سيتم ملؤه بواسطة الـ JS -->
+            </div>
+          </div>
+
+          <!-- إرشادات اللعبة والسير -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 p-4 bg-white/5 border border-white/5 rounded-2xl text-right">
+            <div class="flex items-start gap-2.5">
+              <div class="p-1 rounded bg-emerald-500/10 text-emerald-400 mt-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+              </div>
+              <div>
+                <h4 class="text-white text-xs font-bold">مؤقت زمني 30 ثانية</h4>
+                <p class="text-[10px] text-gray-300">كل سؤال يحمل مؤقتاً تنازلياً. سرعة الإجابة تمنحك مضاعف نقاط إضافي!</p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-2.5">
+              <div class="p-1 rounded bg-yellow-500/10 text-yellow-400 mt-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+              </div>
+              <div>
+                <h4 class="text-white text-xs font-bold">وسائل مساعدة حقيقية</h4>
+                <p class="text-[10px] text-gray-300">استغل وسيلة هاتفية قوية لحذف إجابتين كخيار مساعدة أو تخطي السؤال الجاري.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- زر البدء الفعلي -->
+          <button onclick="startQuiz()" class="w-full py-4 rounded-2xl font-bold text-slate-950 bg-gradient-to-r from-yellow-400 to-amber-500 hover:from-yellow-300 hover:to-amber-400 transition-all shadow-xl hover:-translate-y-0.5 cursor-pointer text-center flex items-center justify-center gap-2">
+            <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
+            <span class="text-lg">ابدأ المسابقة الدينية الآن</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- الواجهة 2: صفحة الأسئلة النشطة والحل التفاعلي -->
+      <div id="screen-quiz" class="w-full max-w-2xl bg-slate-950/40 glass-panel rounded-3xl p-5 md:p-7 relative border border-yellow-500/15 hidden">
+        
+        <!-- صف معلومات السؤال الحالي -->
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-white/5 pb-4 mb-4">
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-gray-400">السؤال:</span>
+            <div id="badge-question-num" class="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-black">
+              1 / 10
+            </div>
+            <span id="badge-question-cat" class="px-2.5 py-0.5 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 text-[11px] font-medium">
+              القرآن الكريم
+            </span>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <div class="text-right">
+              <p class="text-[10px] text-gray-400">النقاط الحالية</p>
+              <p id="label-score" class="text-sm font-bold text-white font-mono">0</p>
+            </div>
+            <button onclick="quitQuiz()" class="px-2.5 py-1 text-xs border border-red-500/25 rounded-lg hover:bg-red-500/10 text-red-400 transition-colors cursor-pointer">
+              إنهاء
+            </button>
+          </div>
+        </div>
+
+        <!-- الخط الخطي للتقدم -->
+        <div class="w-full bg-white/5 h-1.5 rounded-full overflow-hidden mb-5">
+          <div id="progress-line-fill" class="bg-gradient-to-l from-yellow-500 to-emerald-500 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
+        </div>
+
+        <!-- عرض المؤقت الزمني 30 ثانية -->
+        <div class="flex items-center justify-center gap-4 mb-6">
+          <div class="relative flex items-center justify-center w-16 h-16">
+            <!-- المؤقت الدائري SVG -->
+            <svg class="w-16 h-16 transform -rotate-90">
+              <circle cx="32" cy="32" r="26" stroke="rgba(255, 255, 255, 0.05)" stroke-width="4" fill="transparent" />
+              <circle id="timer-progress-ring" cx="32" cy="32" r="26" stroke="#10b981" stroke-width="4" fill="transparent" stroke-dasharray="163" stroke-dashoffset="0" class="timer-circle" />
+            </svg>
+            <span id="label-timer" class="absolute font-black text-lg text-emerald-300">30</span>
+          </div>
+          <div class="text-right">
+            <h4 class="text-white text-xs font-bold flex items-center gap-1.5">
+              <svg class="w-4 h-4 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+              مؤقت الإجابة
+            </h4>
+            <p class="text-[10px] text-gray-400">تلقائياً ستحصل على إجابة صحيحة ونقاط عند السرعة.</p>
+          </div>
+        </div>
+
+        <!-- نص السؤال الرئيسي للعبة -->
+        <div class="p-5 md:p-6 rounded-2xl bg-white/5 border border-white/5 text-center relative overflow-hidden mb-6">
+          <h3 id="label-question-text" class="text-base md:text-lg font-bold leading-relaxed text-white relative z-10">
+            جاري تحميل السؤال...
+          </h3>
+        </div>
+
+        <!-- شريط المساعدات الذكي -->
+        <div class="flex items-center justify-between bg-white/5 p-3 rounded-2xl mb-5">
+          <span class="text-xs font-bold text-yellow-400">المساعدات المتاحة:</span>
+          <div class="flex items-center gap-2">
+            <!-- حذف إجابتين (50/50) -->
+            <button id="btn-lifeline-split" onclick="useLifelineSplit()" class="px-3 py-1.5 rounded-xl text-[11px] font-semibold flex items-center gap-1 bg-amber-500/15 border border-amber-500/30 hover:bg-amber-500/25 text-amber-300 transition-all cursor-pointer">
+              <span>حذف إجابتين</span>
+            </button>
+            <!-- تخطي السؤال -->
+            <button id="btn-lifeline-skip" onclick="useLifelineSkip()" class="px-3 py-1.5 rounded-xl text-[11px] font-semibold flex items-center gap-1 bg-blue-500/15 border border-blue-500/30 hover:bg-blue-500/25 text-blue-300 transition-all cursor-pointer">
+              <span>تخطي</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- خيارات الأجوبة الأربعة -->
+        <div id="options-choices-container" class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
+          <!-- يتم ملؤها بالـ JavaScript تفاعلياً -->
+        </div>
+
+        <!-- الصندوق التعليمي والتعليق عند الحل -->
+        <div id="explanation-panel" class="rounded-2xl border bg-slate-900/60 p-4 border-yellow-500/15 space-y-3 hidden">
+          <div class="flex items-center justify-between pb-2 border-b border-white/5">
+            <span id="label-verdict-title" class="font-bold text-xs uppercase px-2.5 py-1 rounded-full">--</span>
+            <button id="btn-manual-next" onclick="nextQuestion()" class="px-4 py-2 bg-gradient-to-r from-yellow-400 to-amber-500 text-slate-950 font-extrabold text-xs md:text-sm rounded-xl cursor-pointer hover:from-yellow-300 hover:to-amber-400 transition-all shadow-md flex items-center gap-1">
+              <span>التالي <span id="label-advance-countdown">(5ث)</span></span>
+              <svg class="w-4 h-4 transform rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" /></svg>
+            </button>
+          </div>
+          <div class="text-right">
+            <h4 class="text-xs font-extrabold text-yellow-400 mb-1 flex items-center gap-1">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
+              هل تعلم؟ (فائدة علمية مهمة)
+            </h4>
+            <p id="label-explanation-text" class="text-xs md:text-sm text-gray-300 leading-relaxed">
+              شرح وتأصيل تفصيلي..
+            </p>
+          </div>
+
+          <!-- خيار تفعيل أو إيقاف الانتقال التلقائي المستمر للأسئلة -->
+          <div class="pt-2 flex items-center justify-between text-[11px] text-gray-400 border-t border-white/5">
+            <span>التنقل التلقائي المستمر:</span>
+            <button id="btn-toggle-auto-advance" onclick="toggleAutoAdvance()" class="text-xs text-yellow-400/80 hover:text-yellow-400 cursor-pointer flex items-center gap-1.5 focus:outline-none">
+              <div id="auto-advance-checkbox" class="w-3.5 h-3.5 rounded border border-yellow-500 bg-yellow-500/20 flex items-center justify-center">
+                <svg id="checkbox-checked-svg" class="w-2.5 h-2.5 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg>
+              </div>
+              <span>تمكين الانتقال التلقائي للأسئلة</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- الواجهة 3: صفحة تقرير النتيجة والمراجعة الإيمانية الشاملة للأسئلة -->
+      <div id="screen-report" class="w-full max-w-2xl px-5 py-7 md:py-9 glass-panel rounded-3xl relative overflow-hidden shadow-2xl border border-yellow-500/20 text-center hidden">
+        <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-yellow-600 via-yellow-400 to-yellow-600"></div>
+
+        <div class="space-y-6">
+          <div class="relative inline-block mt-2">
+            <div class="absolute -inset-2 bg-yellow-500/25 rounded-full blur-2xl opacity-75"></div>
+            <div class="relative bg-emerald-950 p-5 rounded-full border border-yellow-500/30 w-20 h-20 mx-auto text-yellow-400 flex items-center justify-center">
+              <svg class="w-10 h-10 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" /></svg>
+            </div>
+          </div>
+
+          <div>
+            <span class="text-[10px] tracking-widest text-yellow-400 font-extrabold uppercase bg-yellow-500/10 px-3 py-1 rounded-full">
+              اكتملت فصول المسابقة بنجاح!
+            </span>
+            <h2 id="report-rank-title" class="text-xl md:text-2xl font-black text-white mt-3">لقبك المستحق: --</h2>
+            <p id="report-rank-desc" class="text-xs text-gray-300 max-w-sm mx-auto mt-2 leading-relaxed">---</p>
+          </div>
+
+          <!-- جدول الإحصاءات الأربعة السريع -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-white/5 border border-white/5 p-4 rounded-2xl">
+            <div class="p-3 text-center border-l border-white/5">
+              <p class="text-[10px] text-gray-400">النقاط الكلية</p>
+              <p id="report-score" class="text-xl font-mono text-white font-extrabold mt-1">0</p>
+              <span class="text-[9px] text-emerald-400 block mt-1">+ نقاط السرعة</span>
+            </div>
+
+            <div class="p-3 text-center border-l border-white/5">
+              <p class="text-[10px] text-gray-400">إجابة صحيحة</p>
+              <p id="report-correct" class="text-xl font-mono text-green-400 font-extrabold mt-1">0</p>
+              <span class="text-[9px] text-white/50 block mt-1">من 10 أسئلة</span>
+            </div>
+
+            <div class="p-3 text-center sm:border-l border-white/5">
+              <p class="text-[10px] text-gray-400">إجابات خاطئة</p>
+              <p id="report-wrong" class="text-xl font-mono text-red-400 font-extrabold mt-1">0</p>
+              <span class="text-[9px] text-white/50 block mt-1">أو انتهى مؤقتها</span>
+            </div>
+
+            <div class="p-3 text-center">
+              <p class="text-[10px] text-gray-400">نسبة الثقافة</p>
+              <p id="report-accuracy" class="text-xl font-mono text-yellow-400 font-extrabold mt-1">0%</p>
+              <span class="text-[9px] text-white/50 block mt-1">معدل الفهم ديني</span>
+            </div>
+          </div>
+
+          <!-- قسم تفصيلي لمراجعة الأسئلة مع العلوم والفوائد المترتبة -->
+          <div class="text-right space-y-2.5">
+            <h3 class="text-sm font-extrabold text-yellow-400 flex items-center gap-1.5 pb-1 border-b border-white/5">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
+              مراجعة الأسئلة ومعاني الهداية الشرعية:
+            </h3>
+
+            <!-- صندوق مراجعة قابل للتمرير للأسئلة الفعالة -->
+            <div id="report-history-container" class="max-h-60 overflow-y-auto pr-1.5 space-y-2 bg-slate-900/60 p-2.5 rounded-2xl border border-white/5">
+              <!-- يتم إضافة مراجعة الأسئلة هنا -->
+            </div>
+          </div>
+
+          <!-- اللوحة السفلية لخيارات الرجوع للبدء -->
+          <div class="pt-2 flex flex-col sm:flex-row gap-3">
+            <button onclick="restartQuiz()" class="flex-1 py-3.5 rounded-2xl font-bold bg-gradient-to-r from-yellow-400 to-amber-500 text-slate-950 hover:from-yellow-300 hover:to-amber-400 transition-all shadow-xl cursor-pointer text-center flex items-center justify-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 4.79M9 11l3 3L22 4" /></svg>
+              <span>محاولة جديدة بدفعة أسئلة جديدة</span>
+            </button>
+            <button onclick="backToMainMenu()" class="py-3.5 px-6 rounded-2xl font-bold border border-white/10 text-gray-300 hover:bg-white/5 hover:text-white transition-all cursor-pointer">
+              المنصة الرئيسية والتصنيفات
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- شريط تزييني سفلي متلائم وقالب مانع للضوضاء والمتاجرة (Anti-AI-slop) -->
+    <footer class="z-10 text-center text-gray-400 text-[11px] sm:text-xs py-4 mt-6 border-t border-white/5">
+      <p class="flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 text-emerald-200/60">
+        <span>سبحان الله والحمد لله ولا إله إلا الله والله أكبر</span>
+        <span class="hidden sm:inline text-yellow-500/50">•</span>
+        <span>من سلك طريقاً يلتمس فيه علماً سهّل الله له به طريقاً إلى الجنة</span>
+      </p>
+    </footer>
+
+  </div>
+
+  <!-- الـ JAVASCRIPT التفاعلي الشامل للأسئلة وحفظ الحالة والمؤثرات الصوتية -->
+  <script>
+    // --- بنية الأسئلة الثلاثين الكاملة للمسابقة ---
+    const ALL_QUESTIONS = [
+      // القرآن الكريم
+      {
+        id: 1,
+        category: "القرآن الكريم",
+        text: "ما هي السورة التي تصعد قارئها إلى الجنة وتسمى 'المنجية من عذاب القبر'؟",
+        options: ["سورة يس", "سورة الملك", "سورة الواقعة", "سورة الكهف"],
+        correctAnswerIndex: 1,
+        explanation: "سورة الملك هي المنجية والمجادلة عن صاحبها في القبر وتكفيه وتنجيه من العذاب بتوفيق الله."
+      },
+      {
+        id: 2,
+        category: "القرآن الكريم",
+        text: "ما هي أطول سورة في القرآن الكريم؟",
+        options: ["سورة آل عمران", "سورة البقرة", "سورة المائدة", "سورة الأعراف"],
+        correctAnswerIndex: 1,
+        explanation: "سورة البقرة هي أطول سورة في القرآن الكريم بعدد 286 آية، وتشتمل على أطول آية في القرآن وهي آية الدين."
+      },
+      {
+        id: 3,
+        category: "القرآن الكريم",
+        text: "ما هي السورة التي تعدل ثلث القرآن الكريم؟",
+        options: ["سورة الكافرون", "سورة الفاتحة", "سورة الإخلاص", "سورة الناس"],
+        correctAnswerIndex: 2,
+        explanation: "سورة الإخلاص (قل هو الله أحد) تعدل ثلث القرآن لأنها اشتملت على صفات ومعاني التوحيد الإلهي وهو ثلث مقاصد القرآن."
+      },
+      {
+        id: 4,
+        category: "القرآن الكريم",
+        text: "كم عدد سجدات التلاوة في القرآن الكريم؟",
+        options: ["10 سجدات", "12 سجدة", "14 سجدة", "15 سجدة"],
+        correctAnswerIndex: 3,
+        explanation: "يبلغ عدد سجدات التلاوة في المصحف الشريف 15 سجدة وفق الراجح من أقوال أهل العلم."
+      },
+      {
+        id: 5,
+        category: "القرآن الكريم",
+        text: "ما هي السورة التي لا تبدأ بالبسملة؟",
+        options: ["سورة التوبة", "سورة مريم", "سورة النمل", "سورة النجم"],
+        correctAnswerIndex: 0,
+        explanation: "سورة التوبة (براءة) هي السورة الوحيدة التي لا تبدأ بالبسملة، لأنها نزلت بالفضح للمنافقين وبآيات القتال والشدة."
+      },
+      {
+        id: 6,
+        category: "القرآن الكريم",
+        text: "في أي سورة من القرآن ذكرت البسملة مرتين؟",
+        options: ["سورة التوبة", "سورة النمل", "سورة الرحمن", "سورة البقرة"],
+        correctAnswerIndex: 1,
+        explanation: "ذكرت البسملة مرتين في سورة النمل: الأولى في أول السورة، والثانية في الآية 30: 'إنه من سليمان وإنه بسم الله الرحمن الرحيم'."
+      },
+      {
+        id: 7,
+        category: "القرآن الكريم",
+        text: "ما هي السيدة الوحيدة التي ذُكر اسمها صراحة في القرآن الكريم؟",
+        options: ["آسية امرأة فرعون", "مريم ابنة عمران", "خديجة بنت خويلد", "سارة زوجة إبراهيم"],
+        correctAnswerIndex: 1,
+        explanation: "مريم بنت عمران هي السيدة الوحيدة التي ذكر اسمها صراحة بالقرآن، وسميت سورة كاملة باسمها تعظيماً لمكانتها وتبرئة لها وبنها العظيم عيسى."
+      },
+
+      // السيرة النبوية
+      {
+        id: 8,
+        category: "السيرة النبوية",
+        text: "في أي عام هجري كانت غزوة بدر الكبرى؟",
+        options: ["العام الأول هجرياً", "العام الثاني هجرياً", "العام الثالث هجرياً", "العام الخامس هجرياً"],
+        correctAnswerIndex: 1,
+        explanation: "وقعت غزوة بدر الكبرى في السابع عشر من رمضان في العام الثاني من الهجرة النبوية المشرفة."
+      },
+      {
+        id: 9,
+        category: "السيرة النبوية",
+        text: "من هي أول زوجات الرسول صلى الله عليه وسلم لحوقاً به بعد وفاته؟",
+        options: ["السيدة عائشة بنت أبي بكر", "السيدة زينب بنت جحش", "السيدة حفصة بنت عمر", "السيدة سودة بنت زمعة"],
+        correctAnswerIndex: 1,
+        explanation: "السيدة زينب بنت جحش رضي الله عنها كانت أولى أمهات المؤمنين وفاة ولحوقاً بالنبي بعد وفاته لطول يدها بالصدقة والإحسان."
+      },
+      {
+        id: 10,
+        category: "السيرة النبوية",
+        text: "ما هي الغزوة التي جُرح فيها النبي صلى الله عليه وسلم وكُسرت رباعيته؟",
+        options: ["غزوة أحد", "غزوة حنين", "غزوة الخندق", "غزوة تبوك"],
+        correctAnswerIndex: 0,
+        explanation: "في غزوة أحد تعرض النبي لإصابات بليغة وشُج رأسه الشريف وكُسرت رباعيته (سنه) وارتدى مغفرة جرح جبهته شرفاً ونوراً."
+      },
+      {
+        id: 11,
+        category: "السيرة النبوية",
+        text: "من هو حبر الأمة وترجمان القرآن من الصحابة؟",
+        options: ["عبد الله بن عمر", "عبد الله بن عباس", "زيد بن ثابت", "معاذ بن جبل"],
+        correctAnswerIndex: 1,
+        explanation: "عبد الله بن عباس رضي الله عنهما هو حبر الأمة وترجمان القرآن لدعاء النبي له: 'اللهم فقهه في الدين وعلمه التأويل'."
+      },
+      {
+        id: 12,
+        category: "السيرة النبوية",
+        text: "كم عدد الغزوات التي قادها النبي صلى الله عليه وسلم بنفسه؟",
+        options: ["17 غزوة", "27 غزوة", "37 غزوة", "47 غزوة"],
+        correctAnswerIndex: 1,
+        explanation: "قاد النبي صلى الله عليه وسلم بنفسه 27 غزوة للدفاع وهداية الناس، قاتل في تسع غزوات منها بشكل رئيسي."
+      },
+      {
+        id: 13,
+        category: "السيرة النبوية",
+        text: "من هو الصحابي الذي أشار على النبي صلى الله عليه وسلم بحفر الخندق؟",
+        options: ["أبو بكر الصديق", "عمر بن الخطاب", "سلمان الفارسي", "خالد بن الوليد"],
+        correctAnswerIndex: 2,
+        explanation: "أشار الصحابي سلمان الفارسي رضي الله عنه بحفر الخندق حول المدينة لحمايتها، وهي خطة دفاعية استراتيجية استحسنها النبي."
+      },
+
+      // الأنبياء والرسل
+      {
+        id: 14,
+        category: "الأنبياء والرسل",
+        text: "من هو النبي الذي أُرسل إلى قوم عاد؟",
+        options: ["صالح عليه السلام", "هود عليه السلام", "شعيب عليه السلام", "لوط عليه السلام"],
+        correctAnswerIndex: 1,
+        explanation: "أرسل الله الرسل الكرام، وأرسل نبي الله هوداً عليه السلام إلى قوم عاد الذين استكبروا في الأرض بغير حق."
+      },
+      {
+        id: 15,
+        category: "الأنبياء والرسل",
+        text: "من هو النبي الذي صام عن الكلام ثلاثة أيام بطلب آية من ربه؟",
+        options: ["زكريا عليه السلام", "يحيى عليه السلام", "داود عليه السلام", "أيوب عليه السلام"],
+        correctAnswerIndex: 0,
+        explanation: "أمر الله تعالى نبي الله زكريا عليه السلام ألا يكلم الناس ثلاث ليالٍ سوياً إلا رمزاً كعلامة على حمل زوجته بيحيى."
+      },
+      {
+        id: 16,
+        category: "الأنبياء والرسل",
+        text: "من هو النبي الذي كلّمه الله تكليماً مباشراً دون واسطة؟",
+        options: ["إبراهيم عليه السلام", "موسى عليه السلام", "عيسى عليه السلام", "نوح عليه السلام"],
+        correctAnswerIndex: 1,
+        explanation: "يُلقب موسى عليه السلام بـ 'كليم الله' لأن الله خاطبه مباشرة عند وادي طوى المقدس بجانب جبل الطور."
+      },
+      {
+        id: 17,
+        category: "الأنبياء والرسل",
+        text: "من هو النبي الذي لبث في بطن الحوت ونادى ربه بالتوحيد والاستغفار؟",
+        options: ["يونس عليه السلام", "يوسف عليه السلام", "سليمان عليه السلام", "إسماعيل عليه السلام"],
+        correctAnswerIndex: 0,
+        explanation: "يونس عليه السلام (ذو النون) التقمه الحوت ونادى في الظلمات: 'لا إله إلا أنت سبحانك إني كنت من الظالمين' فاستجاب الله له."
+      },
+      {
+        id: 18,
+        category: "الأنبياء والرسل",
+        text: "من هو النبي الذي كانت معجزته إحياء الموتى وإبراء الأكمه والأبرص بإذن الله؟",
+        options: ["موسى عليه السلام", "عيسى عليه السلام", "إبراهيم عليه السلام", "سليمان عليه السلام"],
+        correctAnswerIndex: 1,
+        explanation: "أيد الله نبيه عيسى بن مريم عليه السلام بمعجزات عظيمة تناسب ما اشتهر به قومه من الطب، مثل إحياء الموتى وإبراء المريض بإذن الله."
+      },
+      {
+        id: 19,
+        category: "الأنبياء والرسل",
+        text: "من هو النبي الملقب بـ 'أبو الأنبياء'؟",
+        options: ["آدم عليه السلام", "نوح عليه السلام", "إبراهيم عليه السلام", "شعيب عليه السلام"],
+        correctAnswerIndex: 2,
+        explanation: "يُلقب إبراهيم عليه السلام بأبي الأنبياء لأن جميع الأنبياء الذين جاءوا من بعده كانوا من ذريته (من ولد إسحاق وإسماعيل)."
+      },
+
+      // الصحابة والتابعين
+      {
+        id: 20,
+        category: "الصحابة والتابعين",
+        text: "من هو الصحابي الذي لُقب بـ 'ذو النورين'؟",
+        options: ["علي بن أبي طالب", "عثمان بن عفان", "أبو عبيدة بن الجراح", "طلحة بن عبيد الله"],
+        correctAnswerIndex: 1,
+        explanation: "لُقب عثمان بن عفان رضي الله عنه بـ 'ذو النورين' لأنه تزوج من ابنتي رسول الله صلى الله عليه وسلم: رقية ثم أم كلثوم بعد وفاتها."
+      },
+      {
+        id: 21,
+        category: "الصحابة والتابعين",
+        text: "من هو أول من أسلم من الرجال الأحرار؟",
+        options: ["علي بن أبي طالب", "أبو بكر الصديق", "زيد بن حارثة", "عمر بن الخطاب"],
+        correctAnswerIndex: 1,
+        explanation: "أبو بكر الصديق رضي الله عنه كان أول من أسلم ولبى دعوة الهداية والتوحيد من الرجال الأحرار دون تردد."
+      },
+      {
+        id: 22,
+        category: "الصحابة والتابعين",
+        text: "من هو الصحابي الملقب بـ 'سيف الله المسلول'؟",
+        options: ["حمزة بن عبد المطلب", "سعد بن أبي وقاص", "خالد بن الوليد", "الزبير بن العوام"],
+        correctAnswerIndex: 2,
+        explanation: "لقب الرسول صلى الله عليه وسلم خالد بن الوليد بـ 'سيف الله المسلول' لعبقريته العسكرية وفتوحاته المباركة."
+      },
+      {
+        id: 23,
+        category: "الصحابة والتابعين",
+        text: "من هو أمين هذه الأمة من أصحاب رسول الله؟",
+        options: ["أبو مسعود الأنصاري", "أبو عبيدة بن الجراح", "معاذ بن جبل", "سعد بن معاذ"],
+        correctAnswerIndex: 1,
+        explanation: "قال النبي صلى الله عليه وسلم: 'إن لكل أمة أميناً، وأمين هذه الأمة أبو عبيدة بن الجراح' رضي الله عنه."
+      },
+      {
+        id: 24,
+        category: "الصحابة والتابعين",
+        text: "من هي الصحابية الملقبة بـ 'ذات النطاقين'؟",
+        options: ["أسماء بنت أبي بكر", "عائشة بنت أبي بكر", "فاطمة الزهراء", "أم سليم بنت ملحان"],
+        correctAnswerIndex: 0,
+        explanation: "لقبت أسماء بنت أبي بكر بذات النطاقين لأنها شقت نطاقها (حزامها) نصفين لتشد بأحدهما سفرة النبي وأباها حين الهجرة وسير الغار."
+      },
+
+      // معلومات عامة
+      {
+        id: 25,
+        category: "معلومات عامة",
+        text: "ما هي أول صلاة فرضت على النبي صلى الله عليه وسلم في الإسلام؟",
+        options: ["صلاة الفجر", "صلاة الظهر", "صلاة العصر", "صلاة المغرب"],
+        correctAnswerIndex: 1,
+        explanation: "أول صلاة صلاها جبريل عليه السلام بالنبي لدعوته بعد فرض الصلوات الخمس في الإسراء والمعراج هي صلاة الظهر."
+      },
+      {
+        id: 26,
+        category: "معلومات عامة",
+        text: "ما هو الركن الثاني من أركان الإسلام الخمسة؟",
+        options: ["إيتاء الزكاة", "إقام الصلاة", "صوم رمضان", "شهادة أن لا إله إلا الله"],
+        correctAnswerIndex: 1,
+        explanation: "الصلاة هي الركن الثاني وعمود الدين وعماده التي لا يسقط أداؤها إلا بعذر شرعي تام."
+      },
+      {
+        id: 27,
+        category: "معلومات عامة",
+        text: "في أي شهر هجري يقع صوم فريضة المسلمين؟",
+        options: ["شعبان", "رمضان", "رجب", "شوال"],
+        correctAnswerIndex: 1,
+        explanation: "فرض الصيام في شهر رمضان المبارك، وهو الشهر التاسع في التقويم الهجري وفيه نزل القرآن الكريم."
+      },
+      {
+        id: 28,
+        category: "معلومات عامة",
+        text: "ما اسم بئر الماء المبارك الذي نبع تحت قدمي إسماعيل عليه السلام رضيعاً؟",
+        options: ["بئر معونة", "بئر زمزم", "بئر أريس", "بئر رومة"],
+        correctAnswerIndex: 1,
+        explanation: "نبع بئر زمزم بفضل من الله تحت قدمي الطفل إسماعيل عليه السلام وأمه هاجر تسعى وجلة بين الصفا والمروة."
+      },
+      {
+        id: 29,
+        category: "معلومات عامة",
+        text: "أين تقع الكعبة المشرفة والمسجد الحرام؟",
+        options: ["المدينة المنورة", "مكة المكرمة", "القدس الشريف", "الرياض"],
+        correctAnswerIndex: 1,
+        explanation: "تقع الكعبة المشرفة في مكة المكرمة وهي قبلة المسلمين في صلواتهم كافة ومستند نسكهم."
+      },
+      {
+        id: 30,
+        category: "معلومات عامة",
+        text: "ما هو المسجد الذي يضم أول قبلة للمسلمين وثالث الحرمين الشريفين؟",
+        options: ["المسجد النبوي", "مسجد قِباء", "المسجد الأقصى", "مسجد الكوفة"],
+        correctAnswerIndex: 2,
+        explanation: "المسجد الأقصى المبارك في القدس الشريف هو القبلة الأولى للمسلمين ومسرى نبينا وثالث المساجد التي تُشد إليها الرحال."
+      }
+    ];
+
+    const CATEGORIES = ["جميع الأسئلة", "القرآن الكريم", "السيرة النبوية", "الأنبياء والرسل", "الصحابة والتابعين", "معلومات عامة"];
+    const ROUND_LIMIT = 10;
+    const INITIAL_TIME_LIMIT = 30;
+
+    // --- حالة اللعبة المتغيرة ---
+    let selectedCategory = "جميع الأسئلة";
+    let isAudioMuted = false;
+    let autoAdvanceEnabled = true;
+
+    let currentQuestions = [];
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let correctCount = 0;
+    let wrongCount = 0;
+    let selectedIdx = null;
+    let isAnswered = false;
+    let timeLeft = INITIAL_TIME_LIMIT;
+    let isLifelineSplitUsed = false;
+    let isLifelineSkipUsed = false;
+    let eliminatedOptions = [];
+    
+    // سجل تخزين مراجعة اللعبة للجولة الحالية
+    let scoreHistory = [];
+
+    // مرجع للمؤقتات لتفادي التداخل
+    let mainTimerInterval = null;
+    let autoAdvanceInterval = null;
+    let countdownRemaining = 5;
+
+    // --- معالجة الصوت التلقائية (Web Audio API) لتفادي مشاكل الحجم الخارجي ---
+    let audioCtx = null;
+
+    function getAudioContext() {
+      if (isAudioMuted) return null;
+      if (!audioCtx) {
+        const AudioCtxClass = window.AudioContext || window.webkitAudioContext;
+        if (AudioCtxClass) {
+          audioCtx = new AudioCtxClass();
+        }
+      }
+      if (audioCtx && audioCtx.state === "suspended") {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    function toggleAudio() {
+      isAudioMuted = !isAudioMuted;
+      document.getElementById("svg-audio-on").classList.toggle("hidden", isAudioMuted);
+      document.getElementById("svg-audio-off").classList.toggle("hidden", !isAudioMuted);
+      
+      if (isAudioMuted && audioCtx) {
+        audioCtx.close().catch(() => {});
+        audioCtx = null;
+      }
+    }
+
+    function playSoundSuccess() {
+      const ctx = getAudioContext();
+      if (!ctx) return;
+      try {
+        const now = ctx.currentTime;
+        const notes = [523.25, 659.25, 783.99, 1046.50]; // نغمات متصاعدة مفرحة
+        notes.forEach((freq, idx) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = "sine";
+          osc.frequency.setValueAtTime(freq, now + idx * 0.08);
+          gain.gain.setValueAtTime(0, now + idx * 0.08);
+          gain.gain.linearRampToValueAtTime(0.12, now + idx * 0.08 + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.08 + 0.35);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now + idx * 0.08);
+          osc.stop(now + idx * 0.08 + 0.4);
+        });
+      } catch(e) {}
+    }
+
+    function playSoundFail() {
+      const ctx = getAudioContext();
+      if (!ctx) return;
+      try {
+        const now = ctx.currentTime;
+        [0, 0.15].forEach((offset) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = "triangle";
+          osc.frequency.setValueAtTime(120, now + offset);
+          osc.frequency.linearRampToValueAtTime(90, now + offset + 0.12);
+          gain.gain.setValueAtTime(0, now + offset);
+          gain.gain.linearRampToValueAtTime(0.18, now + offset + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + offset + 0.14);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now + offset);
+          osc.stop(now + offset + 0.15);
+        });
+      } catch(e) {}
+    }
+
+    function playTickSound(urgent = false) {
+      const ctx = getAudioContext();
+      if (!ctx) return;
+      try {
+        const now = ctx.currentTime;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(urgent ? 880 : 440, now);
+        gain.gain.setValueAtTime(0, now);
+        gain.gain.linearRampToValueAtTime(0.04, now + 0.005);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.05);
+      } catch(e) {}
+    }
+
+    // --- تهيئة الصفحة وتحميل الفئات عند بدء التشغيل ---
+    window.onload = function() {
+      // تحميل أعلى نقاط مخزنة
+      const savedScore = localStorage.getItem("islamic_quiz_high_score_html");
+      if (savedScore) {
+        document.getElementById("label-high-score").innerText = savedScore;
+      }
+      
+      renderCategoriesSelector();
+    }
+
+    function renderCategoriesSelector() {
+      const grid = document.getElementById("categories-grid");
+      grid.innerHTML = "";
+      
+      CATEGORIES.forEach((cat, idx) => {
+        const count = cat === "جميع الأسئلة" 
+          ? ALL_QUESTIONS.length 
+          : ALL_QUESTIONS.filter(q => q.category === cat).length;
+          
+        const isSelected = selectedCategory === cat;
+        
+        const button = document.createElement("button");
+        button.onclick = () => {
+          selectedCategory = cat;
+          renderCategoriesSelector();
+          playTickSound();
+        };
+        
+        button.className = `p-3 text-right rounded-xl border transition-all cursor-pointer relative overflow-hidden group ${
+          isSelected
+            ? "bg-yellow-500/15 border-yellow-500 text-white shadow-lg"
+            : "bg-white/5 border-white/5 text-gray-300 hover:bg-white/10"
+        }`;
+        
+        button.innerHTML = `
+          <div class="flex justify-between items-center z-10 relative">
+            <span class="font-semibold text-xs md:text-sm">${cat}</span>
+            <span class="text-[9px] px-1.5 py-0.5 rounded-full ${
+              isSelected ? "bg-yellow-500/30 text-yellow-200" : "bg-white/5 text-gray-400"
+            }">${count} س</span>
+          </div>
+        `;
+        grid.appendChild(button);
+      });
+    }
+
+    // --- بدء المسابقة وجلب الأسئلة العشوائية ---
+    function startQuiz() {
+      // فلترة الأسئلة بحسب التصنيف المختار
+      let questionsPool = ALL_QUESTIONS;
+      if (selectedCategory !== "جميع الأسئلة") {
+        questionsPool = ALL_QUESTIONS.filter(q => q.category === selectedCategory);
+      }
+
+      // خلط برمي عشوائي واختيار 10 كحد أقصى
+      const shuffled = [...questionsPool].sort(() => Math.random() - 0.5);
+      currentQuestions = shuffled.slice(0, Math.min(ROUND_LIMIT, shuffled.length));
+
+      // إعادة تصفير المتغيرات لدورة نظيفة
+      currentQuestionIndex = 0;
+      score = 0;
+      correctCount = 0;
+      wrongCount = 0;
+      isLifelineSplitUsed = false;
+      isLifelineSkipUsed = false;
+      scoreHistory = [];
+
+      // تحديث مظهر زر وسائل المساعدة المستهلكة
+      document.getElementById("btn-lifeline-split").disabled = false;
+      document.getElementById("btn-lifeline-split").className = "px-3 py-1.5 rounded-xl text-[11px] font-semibold flex items-center gap-1 bg-amber-500/15 border border-amber-500/30 hover:bg-amber-500/25 text-amber-300 transition-all cursor-pointer";
+      
+      document.getElementById("btn-lifeline-skip").disabled = false;
+      document.getElementById("btn-lifeline-skip").className = "px-3 py-1.5 rounded-xl text-[11px] font-semibold flex items-center gap-1 bg-blue-500/15 border border-blue-500/30 hover:bg-blue-500/25 text-blue-300 transition-all cursor-pointer";
+
+      // التوجيه لواجهة الأسئلة
+      document.getElementById("screen-welcome").classList.add("hidden");
+      document.getElementById("screen-report").classList.add("hidden");
+      document.getElementById("screen-quiz").classList.remove("hidden");
+
+      loadQuestion(0);
+    }
+
+    // --- تحميل وعرض السؤال النشط وتحديث الرسوم الصورية ---
+    function loadQuestion(index) {
+      if (mainTimerInterval) clearInterval(mainTimerInterval);
+      if (autoAdvanceInterval) clearInterval(autoAdvanceInterval);
+
+      currentQuestionIndex = index;
+      selectedIdx = null;
+      isAnswered = false;
+      timeLeft = INITIAL_TIME_LIMIT;
+      eliminatedOptions = [];
+
+      const question = currentQuestions[index];
+
+      // تحديث مظهر الواجهات والنصوص
+      document.getElementById("badge-question-num").innerText = `${index + 1} / ${currentQuestions.length}`;
+      document.getElementById("badge-question-cat").innerText = question.category;
+      document.getElementById("label-score").innerText = score;
+      document.getElementById("label-question-text").innerText = question.text;
+      
+      // إخفاء صندوق الفائدة
+      document.getElementById("explanation-panel").classList.add("hidden");
+
+      // تعبئة الخيارات الأربعة للأجوبة
+      renderOptions(question);
+
+      // شريط التقدم العلوي
+      const progressPercent = (index / currentQuestions.length) * 100;
+      document.getElementById("progress-line-fill").style.width = `${progressPercent}%`;
+
+      // تشغيل مؤقت الإجابة
+      runTimer();
+    }
+
+    function renderOptions(question) {
+      const container = document.getElementById("options-choices-container");
+      container.innerHTML = "";
+
+      question.options.forEach((opt, idx) => {
+        const button = document.createElement("button");
+        button.id = `opt-btn-${idx}`;
+        button.onclick = () => selectAnswer(idx);
+        button.className = "p-4 text-right rounded-2xl border transition-all flex items-center justify-between text-sm md:text-base relative overflow-hidden font-sans bg-white/5 border-white/5 text-gray-300 hover:bg-white/10 hover:border-yellow-500/30 cursor-pointer duration-200";
+        button.innerHTML = `<span class="relative z-10">${opt}</span><div id="icon-holder-${idx}" class="p-1 rounded-full bg-white/5 hidden"></div>`;
+        container.appendChild(button);
+      });
+    }
+
+    // --- إدارة ومتابعة المؤقت الزمني 30 ثانية ---
+    function runTimer() {
+      updateTimerUI();
+
+      mainTimerInterval = setInterval(() => {
+        timeLeft--;
+        updateTimerUI();
+
+        // أصوات التكات للثواني الأخيرة
+        if (timeLeft <= 5 && timeLeft > 0) {
+          playTickSound(true);
+        } else if (timeLeft % 5 === 0 && timeLeft > 0) {
+          playTickSound(false);
+        }
+
+        if (timeLeft <= 0) {
+          clearInterval(mainTimerInterval);
+          handleTimeUp();
+        }
+      }, 1000);
+    }
+
+    function updateTimerUI() {
+      document.getElementById("label-timer").innerText = timeLeft;
+      
+      const circle = document.getElementById("timer-progress-ring");
+      const offset = 163 * (1 - timeLeft / INITIAL_TIME_LIMIT);
+      circle.style.strokeDashoffset = offset;
+
+      if (timeLeft <= 5) {
+        circle.setAttribute("stroke", "#ef4444");
+        document.getElementById("label-timer").className = "absolute font-black text-xl text-red-500 animate-pulse";
+      } else if (timeLeft <= 12) {
+        circle.setAttribute("stroke", "#f59e0b");
+        document.getElementById("label-timer").className = "absolute font-black text-lg text-yellow-400";
+      } else {
+        circle.setAttribute("stroke", "#10b981");
+        document.getElementById("label-timer").className = "absolute font-black text-lg text-emerald-300";
+      }
+    }
+
+    // --- معالجة انتهاء المؤقت دون إجابة ---
+    function handleTimeUp() {
+      isAnswered = true;
+      wrongCount++;
+      playSoundFail();
+
+      // تخزين الاستوديو
+      scoreHistory.push({
+        questionId: currentQuestions[currentQuestionIndex].id,
+        userAnswerIndex: null,
+        isCorrect: false
+      });
+
+      revealCorrectAnswers();
+
+      // فتح الفائدة العلمية
+      const verdict = document.getElementById("label-verdict-title");
+      verdict.innerText = "انتهى الوقت المحدد!";
+      verdict.className = "font-bold text-xs uppercase px-2.5 py-1 rounded-full bg-yellow-500/10 text-yellow-400";
+
+      showExplanationSection();
+    }
+
+    // --- معالجة واختيار الأجوبة التفاعلية ---
+    function selectAnswer(optionIdx) {
+      if (isAnswered) return;
+      
+      clearInterval(mainTimerInterval);
+      isAnswered = true;
+
+      const question = currentQuestions[currentQuestionIndex];
+      const isCorrect = optionIdx === question.correctAnswerIndex;
+
+      if (isCorrect) {
+        correctCount++;
+        // احتساب تمايز إضافي بناءً على سرعة الإجابة لتعزيز الحماس
+        const speedBonus = timeLeft * 3;
+        score += 100 + speedBonus;
+        playSoundSuccess();
+      } else {
+        wrongCount++;
+        playSoundFail();
+      }
+
+      // زيادة في الرصيد
+      document.getElementById("label-score").innerText = score;
+
+      // تخزين النتيجة للتوزيع التاريخي
+      scoreHistory.push({
+        questionId: question.id,
+        userAnswerIndex: optionIdx,
+        isCorrect: isCorrect
+      });
+
+      revealCorrectAnswers(optionIdx, isCorrect);
+
+      // صياغة اللوحة التوضيحية
+      const verdict = document.getElementById("label-verdict-title");
+      if (isCorrect) {
+        verdict.innerText = "إجابة صحيحة متميزة!";
+        verdict.className = "font-bold text-xs uppercase px-2.5 py-1 rounded-full bg-green-500/10 text-green-400";
+      } else {
+        verdict.innerText = "إجابة خاطئة!";
+        verdict.className = "font-bold text-xs uppercase px-2.5 py-1 rounded-full bg-red-500/10 text-red-400";
+      }
+
+      showExplanationSection();
+    }
+
+    // كشف الإجابات على الخيارات وحقن الألوان والأيقونات الملائمة ريفاكتور
+    function revealCorrectAnswers(userSelection = null, isCorrect = false) {
+      const question = currentQuestions[currentQuestionIndex];
+      
+      question.options.forEach((_, idx) => {
+        const btn = document.getElementById(`opt-btn-${idx}`);
+        const iconHolder = document.getElementById(`icon-holder-${idx}`);
+        
+        btn.disabled = true;
+
+        if (idx === question.correctAnswerIndex) {
+          // الجواب الصحيح يظهر دائماً بالأخضر
+          btn.className = "p-4 text-right rounded-2xl border transition-all flex items-center justify-between text-sm md:text-base relative overflow-hidden font-sans bg-green-500/15 border-green-500 text-green-300 font-extrabold shadow-md shadow-green-500/5";
+          iconHolder.innerHTML = `<svg class="w-4 h-4 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg>`;
+          iconHolder.className = "p-1 rounded-full bg-white/5";
+          iconHolder.classList.remove("hidden");
+        } else if (idx === userSelection && !isCorrect) {
+          // إما جواب المستخدم غير صحيح يظهر بالأحمر
+          btn.className = "p-4 text-right rounded-2xl border transition-all flex items-center justify-between text-sm md:text-base relative overflow-hidden font-sans bg-red-500/15 border-red-500 text-red-300 font-bold";
+          iconHolder.innerHTML = `<svg class="w-4 h-4 text-red-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>`;
+          iconHolder.className = "p-1 rounded-full bg-white/5";
+          iconHolder.classList.remove("hidden");
+        } else {
+          // بقية الخيارات يضعف تباينها
+          btn.className = "p-4 text-right rounded-2xl border transition-all flex items-center justify-between text-sm md:text-base relative overflow-hidden font-sans bg-white/2 border-white/5 text-gray-500 opacity-40 cursor-not-allowed";
+        }
+      });
+    }
+
+    // --- تفعيل صندوق الشرح وحساب مؤشر الانتقال الذاتي للمؤقت ---
+    function showExplanationSection() {
+      const question = currentQuestions[currentQuestionIndex];
+      document.getElementById("label-explanation-text").innerText = question.explanation;
+      document.getElementById("explanation-panel").classList.remove("hidden");
+
+      if (!autoAdvanceEnabled) {
+        document.getElementById("label-advance-countdown").innerText = "";
+        return;
+      }
+
+      countdownRemaining = 5;
+      document.getElementById("label-advance-countdown").innerText = `(${countdownRemaining}ث)`;
+
+      autoAdvanceInterval = setInterval(() => {
+        countdownRemaining--;
+        if (countdownRemaining <= 0) {
+          clearInterval(autoAdvanceInterval);
+          nextQuestion();
+        } else {
+          document.getElementById("label-advance-countdown").innerText = `(${countdownRemaining}ث)`;
+        }
+      }, 1000);
+    }
+
+    // سياقة التخطي التلقائي
+    function toggleAutoAdvance() {
+      autoAdvanceEnabled = !autoAdvanceEnabled;
+      document.getElementById("auto-advance-checkbox").classList.toggle("bg-yellow-500/20", autoAdvanceEnabled);
+      document.getElementById("checkbox-checked-svg").classList.toggle("hidden", !autoAdvanceEnabled);
+
+      if (!autoAdvanceEnabled && autoAdvanceInterval) {
+        clearInterval(autoAdvanceInterval);
+        document.getElementById("label-advance-countdown").innerText = "";
+      } else if (autoAdvanceEnabled && isAnswered) {
+        // إعادة تهيئة المؤقت إذا كان السؤال مجاب فعلاً
+        showExplanationSection();
+      }
+      playTickSound();
+    }
+
+    // --- التنقل للسؤال التالي أو إنهاء الجولة وعرض التقرير الكلي المالي ---
+    function nextQuestion() {
+      if (mainTimerInterval) clearInterval(mainTimerInterval);
+      if (autoAdvanceInterval) clearInterval(autoAdvanceInterval);
+
+      const nextIdx = currentQuestionIndex + 1;
+
+      if (nextIdx >= currentQuestions.length) {
+        finishQuizRound();
+      } else {
+        loadQuestion(nextIdx);
+      }
+    }
+
+    // --- وسائل المساعدة الذكية النشطة ---
+    
+    // وسيلة حذف خيارين خاطئين (50/50)
+    function useLifelineSplit() {
+      if (isAnswered || isLifelineSplitUsed) return;
+      
+      const question = currentQuestions[currentQuestionIndex];
+      const correctIdx = question.correctAnswerIndex;
+
+      // تجميع الخيارات الخاطئة
+      const wrongIndices = [];
+      question.options.forEach((_, idx) => {
+        if (idx !== correctIdx) wrongIndices.push(idx);
+      });
+
+      // خلط عشوائي لحذف إثنين فقط
+      const toEliminate = wrongIndices.sort(() => Math.random() - 0.5).slice(0, 2);
+      eliminatedOptions = toEliminate;
+      isLifelineSplitUsed = true;
+
+      // حظر وتعديل خيارات الأزرار المحذوفة بصرياً
+      toEliminate.forEach(idx => {
+        const btn = document.getElementById(`opt-btn-${idx}`);
+        btn.disabled = true;
+        btn.className = "p-4 text-right rounded-2xl border transition-all flex items-center justify-between text-sm md:text-base relative overflow-hidden font-sans bg-slate-900/40 border-slate-900/60 text-gray-600 cursor-not-allowed opacity-20 pointer-events-none";
+      });
+
+      // تعطيل زر المساعدة
+      const btnSpl = document.getElementById("btn-lifeline-split");
+      btnSpl.disabled = true;
+      btnSpl.className = "px-3 py-1.5 rounded-xl text-[11px] font-semibold flex items-center gap-1 bg-gray-500/10 text-gray-400 opacity-50 cursor-not-allowed border border-transparent";
+
+      playTickSound();
+    }
+
+    // وسيلة تخطي السؤال
+    function useLifelineSkip() {
+      if (isAnswered || isLifelineSkipUsed) return;
+
+      clearInterval(mainTimerInterval);
+      isAnswered = true;
+      isLifelineSkipUsed = true;
+
+      const question = currentQuestions[currentQuestionIndex];
+
+      // تخزين الحالة التخطية المباشرة
+      scoreHistory.push({
+        questionId: question.id,
+        userAnswerIndex: null,
+        isCorrect: false
+      });
+
+      revealCorrectAnswers();
+
+      // تغيير المظهر الخارجي
+      const verdict = document.getElementById("label-verdict-title");
+      verdict.innerText = "تم تخطي السؤال الحالي";
+      verdict.className = "font-bold text-xs uppercase px-2.5 py-1 rounded-full bg-blue-500/10 text-blue-400";
+
+      // تعطيل زر التخطي الجاري
+      const btnSkp = document.getElementById("btn-lifeline-skip");
+      btnSkp.disabled = true;
+      btnSkp.className = "px-3 py-1.5 rounded-xl text-[11px] font-semibold flex items-center gap-1 bg-gray-500/10 text-gray-400 opacity-50 cursor-not-allowed border border-transparent";
+
+      showExplanationSection();
+      playTickSound();
+    }
+
+    // --- إنهاء الجولة وصياغة التقرير الشريفي النهائي للعلامة ---
+    function finishQuizRound() {
+      // مراجعة ودراسة حفظ الـ High Score المخزون محلياً هاتفياً
+      const savedHighScore = localStorage.getItem("islamic_quiz_high_score_html") || "0";
+      if (score > parseInt(savedHighScore, 10)) {
+        localStorage.setItem("islamic_quiz_high_score_html", score.toString());
+        document.getElementById("label-high-score").innerText = score;
+      }
+
+      // حساب لقب الثقافة المستحق
+      const ratio = correctCount / currentQuestions.length;
+      let rankTitle = "";
+      let rankDesc = "";
+
+      if (ratio === 1) {
+        rankTitle = "العلامة الفذ 👑";
+        rankDesc = "ما شاء الله لا قوة إلا بالله! إجابات مثالية في كافة المواضيع ومعلومات دينية خارقة وحفظ متين للسيرة النبوية والمفاهيم الكريمة.";
+      } else if (ratio >= 0.8) {
+        rankTitle = "الباحث القدير 🌟";
+        rankDesc = "أحسنت جداً! ثقافتك وعلمك الإسلامي متميز، ولك دراية عظيمة بالسيرة والسور الكريمة وسنن المرسلين.";
+      } else if (ratio >= 0.5) {
+        rankTitle = "المستكشف الذكي 📚";
+        rankDesc = "أداء مبارك وطيب! قرأت وبحثت ونلت علماً نافعاً. استمر في المراجعة والدراسة لتقوية معارفك الدينية.";
+      } else {
+        rankTitle = "طالب العلمي المثابر 🌱";
+        rankDesc = "محاولة مباركة! القراءة والتعلم مستمران بفضل من الله، والهدف الرئيسي هنا هو ترسيخ الفهم ومراجعة هذه المعلومات الشرعية الثمينة للتعلم والارتقاء والتمكين.";
+      }
+
+      // ملء بيانات شاشة التقرير والتقييم
+      document.getElementById("report-rank-title").innerText = `لقبُك المستحق: ${rankTitle}`;
+      document.getElementById("report-rank-desc").innerText = rankDesc;
+      document.getElementById("report-score").innerText = score;
+      document.getElementById("report-correct").innerText = correctCount;
+      document.getElementById("report-wrong").innerText = wrongCount;
+      document.getElementById("report-accuracy").innerText = `${Math.round(ratio * 100)}%`;
+
+      // بناء وتأسيس قائمة مراجعة الأسئلة تفصيلياً مع الفوائد التعليمية والشرعية
+      buildHistoryReportsList();
+
+      // تشكيل نغمات الفوز الفخمة
+      playVictorySound();
+
+      // التحويل العرضي للواجهات
+      document.getElementById("screen-quiz").classList.add("hidden");
+      document.getElementById("screen-report").classList.remove("hidden");
+    }
+
+    function buildHistoryReportsList() {
+      const parent = document.getElementById("report-history-container");
+      parent.innerHTML = "";
+
+      currentQuestions.forEach((q, idx) => {
+        const historyData = scoreHistory.find(h => h.questionId === q.id);
+        const isCorrect = historyData ? historyData.isCorrect : false;
+        
+        const card = document.createElement("div");
+        card.className = `p-3.5 rounded-xl border text-xs space-y-2 transition-all ${
+          isCorrect 
+            ? "bg-green-500/5 border-green-500/20 text-green-200"
+            : "bg-red-500/5 border-red-500/20 text-red-200"
+        }`;
+
+        let userChoiceText = "";
+        if (historyData && historyData.userAnswerIndex !== null && historyData.userAnswerIndex !== undefined) {
+          userChoiceText = q.options[historyData.userAnswerIndex];
+        } else {
+          userChoiceText = "منتهية الوقت أو قمت بالتخطي";
+        }
+
+        card.innerHTML = `
+          <div class="flex items-start justify-between gap-2">
+            <span class="font-bold leading-relaxed text-slate-100">${idx + 1}. ${q.text}</span>
+            <span class="text-[10px] px-2 py-0.5 rounded-md flex-shrink-0 font-bold ${
+              isCorrect ? "bg-green-500/10 text-green-400" : "bg-red-500/10 text-red-400"
+            }">${isCorrect ? "صحيحة" : "غير صحيحة"}</span>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-1 text-[11px] text-gray-300 font-medium">
+            <div>
+              <span class="text-gray-400">الإجابة الصحيحة:</span> 
+              <span class="text-emerald-400 font-bold">${q.options[q.correctAnswerIndex]}</span>
+            </div>
+            ${!isCorrect ? `
+            <div>
+              <span class="text-red-300">أشرت إلى:</span> 
+              <span class="text-red-400/90 font-bold">${userChoiceText}</span>
+            </div>` : ""}
+          </div>
+          <div class="bg-black/25 p-2 rounded-lg text-[10.5px] leading-relaxed text-gray-400 border border-white/5 font-sans">
+            ${q.explanation}
+          </div>
+        `;
+        parent.appendChild(card);
+      });
+    }
+
+    // نغمات نهاية اللعبة والفوز
+    function playVictorySound() {
+      const ctx = getAudioContext();
+      if (!ctx) return;
+      try {
+        const now = ctx.currentTime;
+        const chords = [
+          [261.63, 329.63, 392.00], // C4 major
+          [349.23, 440.00, 523.25], // F4 major
+          [392.00, 493.88, 587.33], // G4 major
+          [523.25, 659.25, 783.99]  // C5 major arpeggio Climax
+        ];
+        chords.forEach((chord, chordIdx) => {
+          const startTime = now + chordIdx * 0.22;
+          const duration = chordIdx === 3 ? 0.8 : 0.2;
+          chord.forEach((freq) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = chordIdx === 3 ? "sine" : "triangle";
+            osc.frequency.setValueAtTime(freq, startTime);
+            gain.gain.setValueAtTime(0, startTime);
+            gain.gain.linearRampToValueAtTime(0.08, startTime + 0.03);
+            gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(startTime);
+            osc.stop(startTime + duration + 0.05);
+          });
+        });
+      } catch (e) {}
+    }
+
+    // --- العودة للخلف وتوجيه القوائم الرئيسية ---
+    function restartQuiz() {
+      startQuiz();
+    }
+
+    function backToMainMenu() {
+      if (mainTimerInterval) clearInterval(mainTimerInterval);
+      if (autoAdvanceInterval) clearInterval(autoAdvanceInterval);
+
+      document.getElementById("screen-quiz").classList.add("hidden");
+      document.getElementById("screen-report").classList.add("hidden");
+      document.getElementById("screen-welcome").classList.remove("hidden");
+    }
+
+    function quitQuiz() {
+      if (confirm("هل أنت متأكد من رغبتك في الخروج وإنهاء المسابقة الحالية؟")) {
+        backToMainMenu();
+      }
+    }
+  </script>
+</body>
+</html>
